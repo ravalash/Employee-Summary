@@ -20,30 +20,6 @@ const schema = joi.object().keys({
 })
 
 
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
-
 const newEmployee = async () => {
     employee = [];
     if (employees.length === 0) {
@@ -52,7 +28,7 @@ const newEmployee = async () => {
     }
     else {
         const { employeeRole } = await inquirer.prompt({
-            message: `Please choose a role for the employee.\n`,
+            message: `Please choose a role for the employee.`,
             choices: [`Engineer`, `Intern`],
             name: `employeeRole`,
             type: `list`,
@@ -67,7 +43,7 @@ const newEmployee = async () => {
             validate: validateName
         },
         {
-            message: `Enter the employee ID of the new ${employee.employeeRole}:`,
+            message: `Enter the 3 to 6 digit employee ID of the new ${employee.employeeRole}:`,
             name: `employeeID`,
             type: `input`,
             validate: validateID
@@ -82,7 +58,7 @@ const newEmployee = async () => {
     if (employee.employeeRole === "Manager") {
         questions.push(
             {
-                message: `Enter the office number of the new ${employee.employeeRole}:`,
+                message: `Enter the 4 digit office number of the new ${employee.employeeRole}:`,
                 name: `employeeOfficeNumber`,
                 type: `input`,
                 validate: validateOffice
@@ -112,6 +88,8 @@ const newEmployee = async () => {
 
     const employeeData = await inquirer.prompt(questions);
     employeeData.employeeRole = employee.employeeRole;
+    employeeData.employeeName = employeeData.employeeName.toLowerCase();
+    employeeData.employeeEmail = employeeData.employeeEmail.toLowerCase();
     return employeeData;
 
 }
@@ -168,17 +146,16 @@ const validateSchool = async data => {
 }
 
 
-
 const addEmployee = async () => {
     const employee = await newEmployee();
     if (employee.employeeRole === `Manager`) {
         return new Manager(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.employeeOfficeNumber);
     }
     else if (employee.employeeRole === `Engineer`) {
-        return new Engineer(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.employeeGithub);
+        return new Engineer(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.employeeGithub.toLowerCase());
     }
     else {
-        return new Intern(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.employeeOfficeNumber);
+        return new Intern(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.employeeSchool.toLowerCase());
     }
 }
 
@@ -190,7 +167,7 @@ const employeeLoop = async () => {
             {
                 message: `Do you wish to add another employee?`,
                 type: `confirm`,
-                name: `addMore`
+                name: `addMore`,
             }
         )
         exitLoop = !addMore
