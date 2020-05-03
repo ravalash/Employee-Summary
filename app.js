@@ -4,12 +4,17 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const joi = require('joi');
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-
+const employees = [];
+const schema = joi.object().keys({
+    name: joi.string().regex(/^[a-zA-Z\ \.\d]+$/).min(3),
+    id: joi.number().min(100).max(999999)
+})
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -33,3 +38,58 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+const newEmployee = async () => {
+    employee = [];
+    if (employees.length === 0) {
+        console.log(`No manager has been entered yet. The first employee created will be your manager.\n`);
+        employee.employeeRole = `Manager`;
+    }
+    else {
+        const { employeeRole } = await inquirer.prompt({
+            message: `Please choose a role for the employee.\n`,
+            choices: [`Engineer`, `Intern`],
+            name: `employeeRole`,
+            type: `list`,
+        })
+        employee.employeeRole = employeeRole
+    }
+    const { employeeName } = await inquirer.prompt({
+        message: `Enter the name of the new ${employee.employeeRole}:\n`,
+        name: `employeeName`,
+        type: `input`,
+        validate: validateName
+    })
+    employee.employeeName = employeeName;
+    const { employeeID } = await inquirer.prompt({
+        message: `Enter the employee ID of the new ${employee.employeeRole}:`,
+        name: `employeeID`,
+        type: `number`,
+        validate: validateID
+    })
+
+    employee.employeeID = employeeID;
+    console.log(employee);
+}
+
+const validateName = data => {
+    return joi.validate({ name: data }, schema, function (err, value) {
+        if (err) {
+            console.log(`\nName may only contain alpha numeric characters, spaces, and periods.\n`);
+            return false;
+        }
+        return true;
+    });
+}
+
+const validateID = data => {
+    return joi.validate({ id: data }, schema, function (err, value) {
+        if (err) {
+            // console.log(`\nEmployee ID should be a number between 3 and 6 digits.\n`);
+            return false;
+        }
+        return true;
+    })
+}
+
+newEmployee();
