@@ -74,6 +74,11 @@ The generated HTML file uses text transform to properly display information rega
 
 ![Sample Roster Screenshot](/screenshots/sampleroster.JPG "Sample Roster")
 
+Below is a video demonstrating the functionality of the application including validation of entered text.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=ClCsOuCS5AE
+" target="_blank"><img src="http://img.youtube.com/vi/ClCsOuCS5AE/0.jpg" 
+alt="demonstration of functionality" width="240" height="180" border="10" /></a>
 
 ## Features
 Validation is handled via the inquirer prompt itself which allows for immediate correction if the provided answer is unacceptable.
